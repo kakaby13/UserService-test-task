@@ -1,17 +1,18 @@
-﻿using TestTask.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TestTask.Configuration;
 using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 
-public class UserRoleRepository
+public class UserRoleRepository(AddDbContext context)
 {
-    public Task<UserRole> GetRoleByNameAsync(string name)
+    public async Task<UserRole> GetRoleByNameAsync(string name)
     {
-        throw new NotImplementedException();
+        return await context.UserRoles.SingleAsync(c => c.Name == name);
     }
 
-    public Task<bool> IsRoleExistsAsync(string name)
+    public async Task<bool> IsRoleExistsAsync(string name)
     {
-        throw new NotImplementedException();
+        return await context.UserRoles.AnyAsync(c => c.Name == name);
     }
 }

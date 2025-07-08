@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TestTask.Models;
 using TestTask.Models.Entities;
 
 namespace TestTask.Configuration;

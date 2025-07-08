@@ -1,37 +1,39 @@
-﻿using TestTask.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using TestTask.Configuration;
 using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 
-public class UserRepository
+public class UserRepository(AddDbContext context)
 {
-    public Task<User> AddNewUserAsync(User user)
+    public async Task<User> AddNewUserAsync(User user)
     {
-        throw new NotImplementedException();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
+        
+        return user;
     }
 
-    public Task<bool> IsUserExistsAsync(int userId)
+    public async Task<bool> IsUserExistsAsync(int userId)
     {
-        throw new NotImplementedException();
+        return await context.Users.AnyAsync(x => x.Id == userId);
     }
     
-    public Task<User> GetUserByIdAsync(int userId)
+    public async Task<User> GetUserByIdAsync(int userId)
     {
-        throw new NotImplementedException();
-    }
-    
-    public Task<List<User>> GetUsersAsync()
-    {
-        throw new NotImplementedException();
+        return await context.Users.SingleAsync(x => x.Id == userId);
     }
 
-    public Task<List<string>> GetUsersNamesAsync()
+    public async Task<List<string>> GetUsersNamesAsync()
     {
-        throw new NotImplementedException();
+        return await context.Users.Select(x => x.Name).ToListAsync();
     }
 
-    public Task<User> UpdateUserAsync(User user)
+    public async Task<User> UpdateUserAsync(User user)
     {
-        throw new NotImplementedException();
+        context.Users.Update(user);
+        await context.SaveChangesAsync();
+        
+        return user;
     }
 }
