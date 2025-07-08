@@ -5,10 +5,15 @@ using TestTask.Validators.Common;
 
 namespace TestTask.Validators;
 
-public class AddUserDtoValidator : AbstractValidator<AddUserDto>
+public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
 {
-    public AddUserDtoValidator(UserRoleRepository userRoleRepository)
+    public UpdateUserDtoValidator(UserRoleRepository userRoleRepository, UserRepository userRepository)
     {
+        RuleFor(x => x.Id)
+            .NotEmpty().WithMessage("Invalid input")
+            .MustAsync(async (userId, _) => await userRepository.IsUserExistsAsync(userId))
+            .WithMessage("Role doesn't exist");
+        
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Invalid input");
 
@@ -16,10 +21,7 @@ public class AddUserDtoValidator : AbstractValidator<AddUserDto>
             .NotEmpty().WithMessage("Invalid input")
             .Must(CommonValidationHelper.BeValidEmail).WithMessage("Invalid email");
 
-        RuleFor(x => x.Password)
-            .NotEmpty().WithMessage("Invalid input");
-
-        RuleFor(x => x.Role)
+        RuleFor(x => x.RoleName)
             .NotEmpty().WithMessage("Invalid input")
             .MustAsync(async (role, _) => await userRoleRepository.IsRoleExistsAsync(role))
             .WithMessage("Role doesn't exist");

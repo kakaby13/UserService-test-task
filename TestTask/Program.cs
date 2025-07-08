@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+await app.SetupDefaultData();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -26,6 +28,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseWebSockets();
 app.MapControllers();
 
 app.Run();

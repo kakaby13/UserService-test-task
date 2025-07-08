@@ -19,8 +19,10 @@ public static class ConfigExtensions
     
     public static IServiceCollection AddValidators(this IServiceCollection services)
     {
-        services.AddScoped<IValidator<AddUserDto>, AddUserDtoValidator>();
-        services.AddScoped<IValidator<UpdateUserRoleDto>, UpdateUserRoleDtoValidator>();
+        services
+            .AddScoped<IValidator<AddUserDto>, AddUserDtoValidator>()
+            .AddScoped<IValidator<UpdateUserDto>, UpdateUserDtoValidator>()
+            .AddScoped<IValidator<UpdateUserRoleDto>, UpdateUserRoleDtoValidator>();
 
         return services;
     }
@@ -45,7 +47,7 @@ public static class ConfigExtensions
     public static IServiceCollection AddDatabase(this IServiceCollection services)
     {
         var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-        services.AddDbContext<AddDbContext>(options => options.UseSqlServer(connectionString));        
+        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));        
         
         return services;
     }

@@ -1,2 +1,8 @@
-# UserService-test-task
-Refactoring Task: Improve the User Service
+Json sample to user update
+
+{
+	"id": 1,
+	"username": "Bar",
+	"email": "1@mail.com",
+	"role": "User"
+}

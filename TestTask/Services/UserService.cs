@@ -11,12 +11,13 @@ public class UserService(
     UserRoleRepository userRoleRepository, 
     IMapper mapper,
     IValidator<UpdateUserRoleDto> updateUserRoleValidator,
-    IValidator<AddUserDto> userValidator)
+    IValidator<UpdateUserDto> updateUserDtoValidator,
+    IValidator<AddUserDto> addUserValidator)
 {
     public async Task CreateUser(AddUserDto addUserDto)
     {
         // todo use validation result
-        var validationResult = await userValidator.ValidateAsync(addUserDto);
+        var validationResult = await addUserValidator.ValidateAsync(addUserDto);
         
         var user = mapper.Map<User>(addUserDto);
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(addUserDto.Password);
@@ -25,6 +26,22 @@ public class UserService(
         await userRepository.AddNewUserAsync(user);
     }
 
+    public async Task<UserDto> UpdateUser(UpdateUserDto updateUserDto)
+    {
+        var validationResult = await updateUserDtoValidator.ValidateAsync(updateUserDto);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+        
+        var existingEntity = await userRepository.GetUserByIdAsync(updateUserDto.Id);
+        existingEntity = mapper.Map(updateUserDto, existingEntity);
+        existingEntity.UserRole = await userRoleRepository.GetRoleByNameAsync(updateUserDto.RoleName);
+        await userRepository.UpdateUserAsync(existingEntity);
+        
+        return mapper.Map<UserDto>(existingEntity);
+    }
+    
     public async Task<List<string>> GetUsers()
     {
         var users = await userRepository.GetUsersNamesAsync();

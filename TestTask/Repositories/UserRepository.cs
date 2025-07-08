@@ -4,7 +4,7 @@ using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 
-public class UserRepository(AddDbContext context)
+public class UserRepository(AppDbContext context)
 {
     public async Task<User> AddNewUserAsync(User user)
     {

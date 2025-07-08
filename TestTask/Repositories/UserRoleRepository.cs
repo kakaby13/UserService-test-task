@@ -4,7 +4,7 @@ using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 
-public class UserRoleRepository(AddDbContext context)
+public class UserRoleRepository(AppDbContext context)
 {
     public async Task<UserRole> GetRoleByNameAsync(string name)
     {
