@@ -1,4 +1,11 @@
+using TestTask.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Custom configuration
+builder.Services
+    .AddServices()
+    .AddDatabase();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

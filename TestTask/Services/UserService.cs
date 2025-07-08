@@ -1,6 +1,11 @@
-public class UserService
+using TestTask.Models;
+using TestTask.Repositories;
+
+namespace TestTask.Services;
+
+public class UserService(UserRepository userRepository, UserRoleRepository userRoleRepository)
 {
-    public void CreateUser(string name, string email, string password, string role)
+    public async Task CreateUser(string name, string email, string password, string role)
     {
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
@@ -12,49 +17,35 @@ public class UserService
         {
             throw new Exception("Invalid email");
         }
-
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
-
-        using (var db = new SqlConnection("connectionString"))
+        
+        var user = new User
         {
-            db.Open();
-            var command = new SqlCommand($"INSERT INTO Users (Name, Email, PasswordHash, Role) VALUES ('{name}', '{email}', '{passwordHash}', '{role}')", db);
-            command.ExecuteNonQuery();
-        }
+            Name = name,
+            Email = email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+            UserRole = await userRoleRepository.GetRoleByNameAsync(role)
+        };
+        
+        await userRepository.AddNewUserAsync(user);
     }
 
-    public List<string> GetUsers()
+    public async Task<List<string>> GetUsers()
     {
-        var users = new List<string>();
-
-        using (var db = new SqlConnection("connectionString"))
-        {
-            db.Open();
-            var command = new SqlCommand("SELECT Name FROM Users", db);
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    users.Add(reader.GetString(0));
-                }
-            }
-        }
+        var users = await userRepository.GetUsersNamesAsync();
 
         return users;
     }
 
-    public void UpdateUserRole(int userId, string newRole)
+    public async Task UpdateUserRole(int userId, string newRole)
     {
         if (newRole != "Admin" && newRole != "User")
         {
             throw new Exception("Invalid role");
         }
-
-        using (var db = new SqlConnection("connectionString"))
-        {
-            db.Open();
-            var command = new SqlCommand($"UPDATE Users SET Role = '{newRole}' WHERE Id = {userId}", db);
-            command.ExecuteNonQuery();
-        }
+        
+        var userRole = await userRoleRepository.GetRoleByNameAsync(newRole);
+        var user = await userRepository.GetUserByIdAsync(userId);
+        user.UserRole = userRole;
+        await userRepository.UpdateUserAsync(user);
     }
 }
