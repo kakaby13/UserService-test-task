@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using TestTask.MappingProfiles;
 using TestTask.Models.Dto;
 using TestTask.Repositories;
+using TestTask.Repositories.Implementations;
+using TestTask.Repositories.Interfaces;
 using TestTask.Services;
 using TestTask.Validators;
 
@@ -38,8 +40,8 @@ public static class ConfigExtensions
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services
-            .AddTransient<UserRoleRepository>()
-            .AddTransient<UserRepository>();       
+            .AddTransient<IUserRoleRepository, UserRoleRepository>()
+            .AddTransient<IUserRepository, UserRepository>();       
         
         return services;
     }

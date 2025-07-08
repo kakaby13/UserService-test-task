@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TestTask.Configuration;
 using TestTask.Models.Entities;
+using TestTask.Repositories.Interfaces;
 
-namespace TestTask.Repositories;
+namespace TestTask.Repositories.Implementations;
 
-public class UserRepository(AppDbContext context)
+public class UserRepository(AppDbContext context) : IUserRepository
 {
     public async Task<User> AddNewUserAsync(User user)
     {

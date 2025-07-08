@@ -2,13 +2,13 @@ using AutoMapper;
 using FluentValidation;
 using TestTask.Models.Dto;
 using TestTask.Models.Entities;
-using TestTask.Repositories;
+using TestTask.Repositories.Interfaces;
 
 namespace TestTask.Services;
 
 public class UserService(
-    UserRepository userRepository, 
-    UserRoleRepository userRoleRepository, 
+    IUserRepository userRepository, 
+    IUserRoleRepository userRoleRepository, 
     IMapper mapper,
     IValidator<UpdateUserRoleDto> updateUserRoleValidator,
     IValidator<UpdateUserDto> updateUserDtoValidator,

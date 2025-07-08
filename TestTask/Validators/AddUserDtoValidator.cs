@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
 using TestTask.Models.Dto;
-using TestTask.Repositories;
+using TestTask.Repositories.Interfaces;
 using TestTask.Validators.Common;
 
 namespace TestTask.Validators;
 
 public class AddUserDtoValidator : AbstractValidator<AddUserDto>
 {
-    public AddUserDtoValidator(UserRoleRepository userRoleRepository)
+    public AddUserDtoValidator(IUserRoleRepository userRoleRepository)
     {
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Invalid input");

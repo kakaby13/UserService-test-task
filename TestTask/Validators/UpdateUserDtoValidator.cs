@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
 using TestTask.Models.Dto;
-using TestTask.Repositories;
+using TestTask.Repositories.Interfaces;
 using TestTask.Validators.Common;
 
 namespace TestTask.Validators;
 
 public class UpdateUserDtoValidator : AbstractValidator<UpdateUserDto>
 {
-    public UpdateUserDtoValidator(UserRoleRepository userRoleRepository, UserRepository userRepository)
+    public UpdateUserDtoValidator(IUserRoleRepository userRoleRepository, IUserRepository userRepository)
     {
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Invalid input")
