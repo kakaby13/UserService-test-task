@@ -5,6 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Custom configuration
 builder.Services
     .AddServices()
+    .AddMappingProfiles()
+    .AddRepositories()
+    .AddValidators()
     .AddDatabase();
 
 builder.Services.AddControllers();

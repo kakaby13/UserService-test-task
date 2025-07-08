@@ -1,4 +1,5 @@
 ﻿using TestTask.Models;
+using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 

@@ -1,4 +1,5 @@
 ﻿using TestTask.Models;
+using TestTask.Models.Entities;
 
 namespace TestTask.Repositories;
 
@@ -9,6 +10,11 @@ public class UserRepository
         throw new NotImplementedException();
     }
 
+    public Task<bool> IsUserExistsAsync(int userId)
+    {
+        throw new NotImplementedException();
+    }
+    
     public Task<User> GetUserByIdAsync(int userId)
     {
         throw new NotImplementedException();

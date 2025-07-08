@@ -1,30 +1,26 @@
-using TestTask.Models;
+using AutoMapper;
+using FluentValidation;
+using TestTask.Models.Dto;
+using TestTask.Models.Entities;
 using TestTask.Repositories;
 
 namespace TestTask.Services;
 
-public class UserService(UserRepository userRepository, UserRoleRepository userRoleRepository)
+public class UserService(
+    UserRepository userRepository, 
+    UserRoleRepository userRoleRepository, 
+    IMapper mapper,
+    IValidator<UpdateUserRoleDto> updateUserRoleValidator,
+    IValidator<AddUserDto> userValidator)
 {
-    public async Task CreateUser(string name, string email, string password, string role)
+    public async Task CreateUser(AddUserDto addUserDto)
     {
-        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-        {
-            throw new Exception("Invalid input");
-        }
-
-        var emailRegex = new System.Text.RegularExpressions.Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-        if (!emailRegex.IsMatch(email))
-        {
-            throw new Exception("Invalid email");
-        }
+        // todo use validation result
+        var validationResult = await userValidator.ValidateAsync(addUserDto);
         
-        var user = new User
-        {
-            Name = name,
-            Email = email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-            UserRole = await userRoleRepository.GetRoleByNameAsync(role)
-        };
+        var user = mapper.Map<User>(addUserDto);
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(addUserDto.Password);
+        user.UserRole = await userRoleRepository.GetRoleByNameAsync(addUserDto.Role);
         
         await userRepository.AddNewUserAsync(user);
     }
@@ -36,15 +32,13 @@ public class UserService(UserRepository userRepository, UserRoleRepository userR
         return users;
     }
 
-    public async Task UpdateUserRole(int userId, string newRole)
+    public async Task UpdateUserRole(UpdateUserRoleDto updateUserRoleDto)
     {
-        if (newRole != "Admin" && newRole != "User")
-        {
-            throw new Exception("Invalid role");
-        }
+        // todo use validation result
+        var validationResult = await updateUserRoleValidator.ValidateAsync(updateUserRoleDto);
         
-        var userRole = await userRoleRepository.GetRoleByNameAsync(newRole);
-        var user = await userRepository.GetUserByIdAsync(userId);
+        var userRole = await userRoleRepository.GetRoleByNameAsync(updateUserRoleDto.RoleName);
+        var user = await userRepository.GetUserByIdAsync(updateUserRoleDto.UserId);
         user.UserRole = userRole;
         await userRepository.UpdateUserAsync(user);
     }
