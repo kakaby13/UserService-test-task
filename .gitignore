@@ -1,4 +1,6 @@
 .idea
+.vs
+*.user
 
 # Build results
 [Dd]ebug/
